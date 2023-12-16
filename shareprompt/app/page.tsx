@@ -1,11 +1,13 @@
 import React from "react";
 import { updateUser, fetchData } from "@/lib/actions/user.action";
-import App from "@/components/App";
+import App from "@/components/Main";
 const Home = async () => {
   const user = await fetchData();
-
   if (!user) return null;
-  await updateUser({
+  const userData=JSON.stringify(user)
+
+  
+  const data=await updateUser({
     userId: user.id,
     image: user.imageUrl,
     username: user.username || user.emailAddresses[0].emailAddress,
@@ -13,9 +15,8 @@ const Home = async () => {
     path: "/",
   });
 
-  return (
-      <App />
-  );
+
+  return <App user={userData}/>;
 };
 
 export default Home;

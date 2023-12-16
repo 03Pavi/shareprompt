@@ -1,39 +1,31 @@
-"use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+"use client"
 import {
-  TextField,
-  Button,
-  Chip,
-  Container,
-  Grid,
   Box,
   Typography,
-  Autocomplete,
+  Grid,
+  TextField,
   FormControl,
+  Autocomplete,
+  Chip,
+  Button,
+  Container
 } from "@mui/material";
-import { fetchDataJSON } from "@/lib/actions/user.action";
-import ThoughtsList from "@/components/thoughts-list";
-const maxWords = 230;
+import { ChangeEvent, FormEvent, useState } from "react";
 
-const Create: React.FC = async () => {
+const Create = () => {
+  const maxWords = 230;
   const [thought, setThought] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
   const [inputValue, setInputValue] = useState("");
-  const [email, setEmail] = React.useState<any>("");
+  const [email, setUser] = useState<string>("");
 
-  React.useEffect(() => {
-    const fetchUserData = async () => {
-      const email = await fetchDataJSON();
-      if (!email) return null;
-      else {
-        setEmail(email);
-      }
-    };
-    fetchUserData();
-  }, []);
-  //api
+  // useEffect(()=>{
+
+  //   setUser(data)
+  // },[])
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    let data=localStorage.getItem("usermail")
     event.preventDefault();
     // Check if thought exceeds 230 words
     const wordCount = thought.split(/\s+/).filter(Boolean).length;
@@ -44,25 +36,20 @@ const Create: React.FC = async () => {
 
     try {
       // Make Axios POST request to API endpoint
-
       const postData = {
         thought,
-        email,
+        email:data,
         tags,
       };
-      const response = await fetch("/api/thoughts", {
+      await fetch("/api/thoughts", {
         method: "POST",
-        cache:"no-cache",
+        cache: "no-cache",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(postData),
       });
 
-      const data = await response.json();
-
-      // Handle the response as needed
-      // console.log("Response from API:", response.data);
       // Clear form fields
       setThought("");
       setTags([]);
@@ -199,10 +186,7 @@ const Create: React.FC = async () => {
           </Grid>
         </form>
       </Container>
-
-      {/* <ThoughtsList id={id} /> */}
     </Box>
   );
 };
-
 export default Create;

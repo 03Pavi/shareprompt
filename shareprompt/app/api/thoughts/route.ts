@@ -1,3 +1,4 @@
+
 import { connectToDB } from "@/lib/mongo-server";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
@@ -14,7 +15,7 @@ interface User {
 export async function fetchUser(email: string) {
   try {
     connectToDB();
-    return await User.findOne({ email });
+    return await User.findOne({ username:email });
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error.message}`);
   }

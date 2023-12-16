@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ClerkProvider } from "@clerk/nextjs";
 import NavBar from "@/components/navbar";
 import { ReactQueryProvider } from "./react-query-provider";
@@ -20,15 +19,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
       <ReactQueryProvider>
+    <ClerkProvider>
         <html lang="en">
           <body className="body">
             <NavBar />
             {children}
           </body>
         </html>
-      </ReactQueryProvider>
     </ClerkProvider>
+      </ReactQueryProvider>
   );
 }
