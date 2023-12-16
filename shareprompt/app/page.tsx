@@ -1,28 +1,21 @@
-import SearchBar from '@/components/search-bar'
-import React from 'react'
-import Header from '@/components/header'
-import ThoughtsList from '@/components/thoughts-list'
-import { updateUser } from '@/lib/actions/user.action';
-import { currentUser } from '@clerk/nextjs';
+import React from "react";
+import { updateUser, fetchData } from "@/lib/actions/user.action";
+import App from "@/components/App";
 const Home = async () => {
-  const user = await currentUser();
-  if (!user) return null;
+  const user = await fetchData();
 
+  if (!user) return null;
   await updateUser({
     userId: user.id,
     image: user.imageUrl,
     username: user.username || user.emailAddresses[0].emailAddress,
-    name: user.firstName || '',
-    path: '/',
+    name: user.firstName || "",
+    path: "/",
   });
 
   return (
-    <div>
-      <Header />
-      <SearchBar />
-      <ThoughtsList />
-    </div>
-  )
-}
+      <App />
+  );
+};
 
-export default Home
+export default Home;

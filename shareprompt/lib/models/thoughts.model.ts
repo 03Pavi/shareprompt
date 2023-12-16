@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const thoughtSchema = new mongoose.Schema({
-    text: { type: String, required: true },
+    text: { type: String },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
     createdAt: {
         type: Date,
@@ -11,8 +11,7 @@ const thoughtSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    tags: { type: String, required: true },
-
+    tags: { type: [String] }
 
 }, { versionKey: false });
 
