@@ -22,7 +22,7 @@ export async function fetchUser(email: string) {
 export const GET = async (request: NextApiRequest, context: any) => {
   try {
     connectToDB();
-    const data = await Thoughts.find().populate("author");
+    const data = await Thoughts.find().exec();
     return NextResponse.json(data);
   } catch (err) {
     console.error(err);
