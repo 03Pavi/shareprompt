@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const thoughtSchema = new mongoose.Schema({
     text: { type: String },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', require: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
     createdAt: {
         type: Date,
         default: Date.now,

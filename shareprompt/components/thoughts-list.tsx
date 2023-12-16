@@ -2,6 +2,7 @@
 import { Box } from "@mui/material";
 import Card from "./card";
 import React, { useState } from "react";
+import axios from "axios"
 export interface Thoughts {
   text?: string;
   author?: {
@@ -17,20 +18,19 @@ const ThoughtsList = ({ searchQuery }: { searchQuery: string }) => {
 
   React.useEffect(() => {
     const getThoughts = async () => {
-      const response = await fetch("/api/thoughts", {
+      const response = await fetch("/api/create", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       const data = await response.json();
+      
       setList(data);
     };
     getThoughts();
   }, [searchQuery]);
-
-  const filteredList = list.filter((thought: Thoughts) =>
+  const filteredList = list?.filter((thought: Thoughts) =>
     thought.text?.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
