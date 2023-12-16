@@ -1,17 +1,30 @@
 // SearchBar.js
-"use client"
-import React from 'react';
-import { TextField, Box, Button } from '@mui/material';
+"use client";
+import React, { useState } from "react";
+import { TextField, Box, Button } from "@mui/material";
 
-const SearchBar = () => {
+const SearchBar = ({
+  searchQuery,
+  setSearchQuery,
+}: {
+  searchQuery: string;
+  setSearchQuery: (e: string) => void;
+}) => {
+  const [query, setQuery] = useState("");
+
   const handleSearch = () => {
-    // Add your search logic here
+    setSearchQuery(query);
+    setQuery("");
   };
 
   return (
     <Box
       display="flex"
-      sx={{ justifyContent: "center", marginTop: "-30px", marginBottom: "20px" }}
+      sx={{
+        justifyContent: "center",
+        marginTop: "-30px",
+        marginBottom: "20px",
+      }}
     >
       <Box display="flex" alignItems="center">
         <TextField
@@ -19,12 +32,19 @@ const SearchBar = () => {
           label="Search Prompts"
           fullWidth
           margin="normal"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
         <Button
           variant="outlined"
-          color='warning'
+          color="warning"
           onClick={handleSearch}
-          sx={{ marginLeft: '8px', height: "70%", marginTop: "8px", width: "150px" }}
+          sx={{
+            marginLeft: "8px",
+            height: "70%",
+            marginTop: "8px",
+            width: "150px",
+          }}
         >
           Search
         </Button>

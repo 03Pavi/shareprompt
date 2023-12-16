@@ -6,10 +6,11 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   image: String,
   
-  todos: [
+  thoughts: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Thought",
+      require:true
     },
   ],
 }, { versionKey: false });
