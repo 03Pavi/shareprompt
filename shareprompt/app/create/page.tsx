@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Box,
   Typography,
@@ -8,7 +8,8 @@ import {
   Autocomplete,
   Chip,
   Button,
-  Container
+  Container,
+  Alert,
 } from "@mui/material";
 import { ChangeEvent, FormEvent, useState } from "react";
 
@@ -19,13 +20,15 @@ const Create = () => {
   const [error, setError] = useState<string>("");
   const [inputValue, setInputValue] = useState("");
   const [email, setUser] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
 
   // useEffect(()=>{
 
   //   setUser(data)
   // },[])
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    let data=localStorage.getItem("usermail")
+
+    let data = localStorage.getItem("email");
     event.preventDefault();
     // Check if thought exceeds 230 words
     const wordCount = thought.split(/\s+/).filter(Boolean).length;
@@ -33,30 +36,37 @@ const Create = () => {
       setError("Thought exceeds the maximum word limit (230 words).");
       return;
     }
+    else if (!thought || tags.length <= 0) {
+      setMessage("Please fill both feilds");
+    }
+    else {
+      try {
+        // Make Axios POST request to API endpoint
+        const postData = {
+          thought,
+          email: data,
+          tags,
+        };
+        const Thoughts = await fetch("/api/create", {
+          method: "POST",
+          cache: "no-cache",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        });
 
-    try {
-      // Make Axios POST request to API endpoint
-      const postData = {
-        thought,
-        email:data,
-        tags,
-      };
-      await fetch("/api/thoughts", {
-        method: "POST",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
-
-      // Clear form fields
-      setThought("");
-      setTags([]);
-      setError("");
-    } catch (error) {
-      console.error("Error submitting thought:", error);
-      setError("Error submitting thought. Please try again.");
+        if (Thoughts) {
+          setMessage("Your Thought added Successfully");
+        }
+        // Clear form fields
+        setThought("");
+        setTags([]);
+        setError("");
+      } catch (error) {
+        console.error("Error submitting thought:", error);
+        setError("Error submitting thought. Please try again.");
+      }
     }
   };
 
@@ -127,9 +137,11 @@ const Create = () => {
                 value={thought}
                 onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
                   setThought(event.target.value);
+                  setMessage("")
+
                 }}
-                error={!!error}
-                helperText={error}
+                // error={!!error}
+                // helperText={error}
               />
             </Grid>
             <Grid item xs={12}>
@@ -171,11 +183,24 @@ const Create = () => {
                         label={"Tags"}
                         onChange={(e) => {
                           setInputValue(e.target.value);
+                          setMessage("")
                         }}
+                        // error={!!error}
+                        // helperText={error}
                       />
                     </>
                   )}
                 />
+                {message.toLowerCase().includes("fill") && (
+                  <Alert severity="warning" icon={false}>
+                    {message}
+                  </Alert>
+                )}
+                {message.toLowerCase().includes("success") && (
+                  <Alert severity="success" icon={false}>
+                    {message}
+                  </Alert>
+                )}
               </FormControl>
             </Grid>
             <Grid item xs={12}>

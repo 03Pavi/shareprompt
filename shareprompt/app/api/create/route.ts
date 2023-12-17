@@ -1,9 +1,7 @@
 import { connectToDB } from "@/lib/mongo-server";
 import { NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
 import Thoughts from "@/lib/models/thoughts.model";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Request as Req } from "express";
+import { NextApiRequest } from "next";
 import User from "@/lib/models/user.model";
 interface User {
   authorId: string;
@@ -22,7 +20,7 @@ export async function fetchUser(email: string) {
 export const GET = async (request: NextApiRequest, context: any) => {
   try {
     connectToDB();
-    const data = await Thoughts.find().populate("author");
+    const data = await Thoughts.find().populate("author").exec();
     return NextResponse.json(data);
   } catch (err) {
     console.error(err);

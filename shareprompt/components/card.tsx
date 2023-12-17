@@ -13,6 +13,7 @@ import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Thoughts } from "./thoughts-list";
+import { Alert } from "@mui/material";
 
 const ExpandMore = styled((props: any) => {
   const { expand: any, ...other } = props;
@@ -25,18 +26,65 @@ const ExpandMore = styled((props: any) => {
   }),
 }));
 
-export default function Cards(props: Thoughts) {
+interface CardProps {
+  text: string;
+  author: {
+    _id: string;
+    image: string;
+    name: string;
+    username: string;
+  };
+  createdAt: string;
+  tags: string[];
+  likesCount: number;
+  _id: string;
+  likedPost: string[];
+}
+export default function Cards(props: CardProps) {
   const [time, setTime] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
+  const [count, setCount] = React.useState(props.likesCount);
+  const [message, setMessage] = React.useState("");
   React.useEffect(() => {
     if (props.createdAt) setTime(props.createdAt.substring(0, 10));
-  }, []);
-  const [expanded, setExpanded] = React.useState(false);
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+    const fetchData = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setLoading(false);
+    };
+    fetchData();
+  }, [props.createdAt]);
+
+  const handleCopy = (text: string) => {
+    // Copy the text to the clipboard
+    navigator.clipboard.writeText(text);
   };
 
+  // liked post
+
+  const handleLike = async (id: string) => {
+    // Simulating API call delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const data = localStorage.getItem("email");
+    const postData = {
+      postId: id,
+      userId: data,
+      path: "/",
+    };
+    await fetch("/api/likes", {
+      method: "POST",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    });
+    // Toggle color and update count
+  };
   return (
     <Card sx={{ maxWidth: 345, minWidth: "300px" }}>
+       {message.toLowerCase().includes("copied") && (
+          <Alert severity="success" sx={{position:"absolute",marginTop:"-50px"}}>{message}</Alert>
+        )}
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -47,9 +95,16 @@ export default function Cards(props: Thoughts) {
             />
           </Avatar>
         }
+       
         action={
-          <IconButton aria-label="share">
-            <ContentCopyIcon />
+          <IconButton aria-label="share" >
+            <ContentCopyIcon
+              onClick={() => {
+                handleCopy(props.text);
+                setMessage("copied");
+              }}
+            />
+         
           </IconButton>
         }
         title={props.author?.name}
@@ -58,15 +113,32 @@ export default function Cards(props: Thoughts) {
 
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {props.text}
+          {loading ? "Loading.. ." : props.text}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton
+          aria-label="add to favorites"
+          onClick={() => {
+            handleLike(props._id);
+            setCount((prevCount) =>
+              prevCount > count ? prevCount - 1 : prevCount + 1
+            );
+          }}
+        >
+          <FavoriteIcon
+            style={{
+              color: props.likedPost.includes(props._id) ? "red" : "inherit",
+            }}
+          />
+          <p style={{ fontSize: "20px" }}>{count}</p>
         </IconButton>
-        {props.tags?.map((i, index) => {
-          return <p style={{ color: "skyblue", marginLeft: "5px" }}>#{i} </p>;
+        {props.tags?.map((i: string, index: number) => {
+          return (
+            <p key={index} style={{ color: "skyblue", marginLeft: "5px" }}>
+              #{i}{" "}
+            </p>
+          );
         })}
         {/* <IconButton aria-label="share">
           <ShareIcon />

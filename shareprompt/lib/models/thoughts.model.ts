@@ -1,20 +1,32 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const thoughtSchema = new mongoose.Schema({
+const thoughtSchema = new mongoose.Schema(
+  {
     text: { type: String },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      require: true,
+    },
     createdAt: {
-        type: Date,
-        default: Date.now,
+      type: Date,
+      default: Date.now,
     },
     isDone: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
-    tags: { type: [String] }
+    tags: { type: [String] },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { versionKey: false }
+);
 
-}, { versionKey: false });
-
-const Thought = mongoose.models.Thought || mongoose.model('Thought', thoughtSchema);
+const Thought =
+  mongoose.models.Thought || mongoose.model("Thought", thoughtSchema);
 
 export default Thought;
